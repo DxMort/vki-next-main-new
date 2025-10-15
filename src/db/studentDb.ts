@@ -20,6 +20,7 @@ export const getStudentsDb = async (): Promise<StudentInterface[]> => {
     });
   });
 
+  
   // test data
   // const groups: GroupInterface[] = [
   //   {
@@ -31,4 +32,22 @@ export const getStudentsDb = async (): Promise<StudentInterface[]> => {
   // ];
 
   return students as StudentInterface[];
+};
+
+export const deleteStudentDb = async (id: number): Promise<boolean> => {
+  const db = new sqlite3.Database(process.env.DB ?? './db/vki-web.db');
+
+  return new Promise((resolve, reject) => {
+    const sql = 'DELETE FROM students WHERE id = ?';
+    db.run(sql, [id], function (err) {
+      if (err) {
+        reject(err);
+        db.close();
+        return;
+      }
+      // this.changes показывает, сколько строк было удалено
+      resolve(this.changes > 0);
+      db.close();
+    });
+  });
 };
